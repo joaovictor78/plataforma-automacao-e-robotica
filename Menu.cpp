@@ -1,13 +1,11 @@
 #include "Arduino.h"
 #include "Menu.h"
-#include "IMenu.cpp"
+#include "IMenu.h"
 #include <glcd.h>
 #include "fonts/SystemFont5x7.h"  
 
 //****************************************************************
-Menu::Menu(String list[]){
-   String value[] = {"hhhhhh", "hhhhhh", "hhhhhh", "hhhhhh","hhhhhh"};
-  int size_list = sizeof(list)/sizeof(String);
+Menu::Menu(IMenu list[], int size_list){
   for(int count = 0; count < size_list; count++){
     list_category_name[count] =  list[count];
   }
@@ -40,15 +38,19 @@ void Menu::buttonPressioned( int buttonUP, int buttonDown, int buttonConfirm){
     
    }
 }
+void countIndicator(){
+  int firstIndex = 0;
+  
+}
 void Menu::generateList(){
    
  
    int size_list = 5;
    for(int count = 0; count < size_list; count ++){
     if(count == indicatorCursor){
-          menuSelected(String(list_category_name[count]), count);
+          menuSelected(String(list_category_name[count].getTitle()), count);
     } else{
-          menuNotSelected(String(list_category_name[count]), count);
+          menuNotSelected(String(list_category_name[count].getTitle()), count);
     }
    }
 }

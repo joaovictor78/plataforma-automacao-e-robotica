@@ -1,8 +1,7 @@
-#ifndef IMENU;
-#define IMENU;
-class IMenu{
-  public: 
-     int title;
-     void (*func_ptr);
-};
-#endif;
+#include "IMenu.h"
+void setTitle(char title)::IMenu{
+    this->title = title; 
+}
+char getTitle()::IMenu{
+   return this->title; 
+}
