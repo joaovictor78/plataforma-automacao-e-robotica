@@ -1,7 +1,6 @@
 #include "IMenu.h"
-void setTitle(char title)::IMenu{
-    this->title = title; 
-}
-char getTitle()::IMenu{
-   return this->title; 
+#include "Arduino.h"
+IMenu::IMenu(String title,  void (* f) ()){
+  this->title = title;
+  this->func_ptr = *f;
 }

@@ -1,11 +1,12 @@
 #ifndef imenu
 #define imenu
-class IMenu{
-  private:
-     char title;     
-  public: 
-     void setTitle(char title);
-     char getTitle();
-     void (*func_ptr);
+#include "Arduino.h"
+class IMenu
+{   public:
+        String title;
+        void (*func_ptr)();
+        IMenu(String title, void (* f) ());
+        
+        
 };
 #endif

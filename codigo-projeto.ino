@@ -3,17 +3,15 @@
 #define buttonUP 3
 #define buttonConfirm  2
 #define buttonDown 1
+#include <glcd.h>
+#include "fonts/SystemFont5x7.h"  
 //--------------- VARIAVEIS GLOBAIS -----------------------------
-IMenu menu1;
-menu1.setTitle("test");
-IMenu listTest[3] = {menu1};
-String list_menus[] = {"Analogicos", "Digitais", "Creditos",  "Creditos1",  "Creditos2"};
-Menu mainMenu(listTest, 5);
+String listTest[] = {"Analogicos", "Digitais", "Creditos", "Teste", "Teste1", "Teste2", "Teste3", "Teste4", "Teste5", "Teste6", "Teste7", "Teste8"};
+Menu mainMenu;
 void setup(){
    pinMode(buttonDown, INPUT_PULLUP);
    pinMode(buttonUP, INPUT_PULLUP);
-   mainMenu.start();
-   mainMenu.generateList();
+   mainMenu.start(listTest, 12);
 }
 
 void  loop(){
