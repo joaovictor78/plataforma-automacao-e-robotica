@@ -1,11 +1,11 @@
 #ifndef imenu
 #define imenu
 #include "Arduino.h"
-class IMenu
+class ItemMenu
 {   public:
         String title;
-        void (*func_ptr)();
-        IMenu(String title, void (* f) ());
+        void (*action)();
+        ItemMenu(String title, void (* f) ());
         
         
 };
