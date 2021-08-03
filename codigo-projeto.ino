@@ -5,15 +5,22 @@
 #define buttonDown 1
 #include <glcd.h>
 #include "fonts/SystemFont5x7.h"
+//--------------- VARIAVEIS GLOBAIS -----------------------------
+enum TYPES_MENU {
+  MENU_PRINCIPAL,
+  MENU_ANALOGICOS,
+  MENU_DIGITAIS
+};
+TYPES_MENU menus_selected = MENU_PRINCIPAL;
 // ---------- PROTOTIPO DE FUNÇOES ------------------------------
 void printAnalogico();
 void printDigital();
 void printCreditos();
 void limparTela();
 // ---------- DECLARACAO DE OBJETOS ------------------------------  
-Menu mainMenu;
-Menu menuAnalogicos;
-Menu menuDigitais;
+Menu mainMenu("Menu principal");
+Menu menuAnalogicos("Analogicos");
+Menu menuDigitais("Digitais");
 
 //  ---------- ARRAY DE OBJETOS --------------------------------
 ItemMenu listMainMenu[] = {
@@ -26,7 +33,7 @@ ItemMenu listMainMenu[] = {
 };
 
 ItemMenu listAnalogicosMenu[] = {
-  ItemMenu("Motor de passo", printAnalogico),
+  ItemMenu("Motor de passo", limparTela),
   ItemMenu("Motor", printDigital),
   ItemMenu("Motor1", printCreditos),
   ItemMenu("Motor2", limparTela),
@@ -34,27 +41,23 @@ ItemMenu listAnalogicosMenu[] = {
   ItemMenu("Motor4", limparTela)
 };
 ItemMenu listDigitaisMenu[] = {
-  ItemMenu("Sensor ultrassonico", printAnalogico),
-  ItemMenu("Sensor de temperatura", printDigital),
-  ItemMenu("Sensor de gás", printCreditos),
-  ItemMenu("Sensor de cores", limparTela),
-  ItemMenu("Sensor de proximidade", limparTela),
-  ItemMenu("Sensor de umidade", limparTela)
+  ItemMenu("S. ultrassonico", limparTela),
+  ItemMenu("S. temperatura", printDigital),
+  ItemMenu("S. gas", printCreditos),
+  ItemMenu("S. cores", limparTela),
+  ItemMenu("S. proximidade", limparTela),
+  ItemMenu("S. umidade", limparTela)
 };
 //----------- FUNCOES ----------------------------------------
 void printAnalogico(){
   GLCD.ClearScreen();
   menuAnalogicos.start(listAnalogicosMenu, 6);
-  while(true){
-    menuAnalogicos.buttonPressioned(digitalRead(buttonUP), digitalRead(buttonDown), digitalRead(buttonConfirm));
-  }
+  menus_selected = MENU_ANALOGICOS;
 }
 void printDigital(){
   GLCD.ClearScreen();
   menuDigitais.start(listDigitaisMenu, 6);
-  while(true){
-    menuDigitais.buttonPressioned(digitalRead(buttonUP), digitalRead(buttonDown), digitalRead(buttonConfirm));
-  }
+  menus_selected = MENU_DIGITAIS;
 }
 void printCreditos(){
   GLCD.ClearScreen();
@@ -70,7 +73,7 @@ void printCreditos(){
 void limparTela(){
   GLCD.ClearScreen();
 }
-//--------------- VARIAVEIS GLOBAIS -----------------------------
+
 
 ItemMenu list[] = {
   ItemMenu("Analogicos", printAnalogico),
@@ -89,5 +92,17 @@ void setup(){
 }
 
 void  loop(){
-  mainMenu.buttonPressioned(digitalRead(buttonUP), digitalRead(buttonDown), digitalRead(buttonConfirm));
+  switch(menus_selected){
+  case MENU_PRINCIPAL
+  :
+     mainMenu.buttonPressioned(digitalRead(buttonUP), digitalRead(buttonDown), digitalRead(buttonConfirm));
+    break;
+  case MENU_ANALOGICOS:
+    menuAnalogicos.buttonPressioned(digitalRead(buttonUP), digitalRead(buttonDown), digitalRead(buttonConfirm));
+    break;
+  case MENU_DIGITAIS:
+    menuDigitais.buttonPressioned(digitalRead(buttonUP), digitalRead(buttonDown), digitalRead(buttonConfirm));
+    break;
+  }
+ 
 }

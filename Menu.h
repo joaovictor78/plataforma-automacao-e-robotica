@@ -6,7 +6,7 @@
 #include "fonts/SystemFont5x7.h"  
 class Menu{
   public: 
-      Menu();
+      Menu(String tag);
       void start(ItemMenu list[], int size_list);
       ItemMenu *copyList;
       void generateList();
@@ -14,6 +14,7 @@ class Menu{
       void buttonPressioned(int buttonUP, int buttonDown, int buttonConfirm);
   private: 
       int sizeList;
+      String tag;
       void menuSelected(String title, int position);
       void menuNotSelected(String title, int position);
       void gerarMenu(int count, int position);
