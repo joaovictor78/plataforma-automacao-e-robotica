@@ -4,8 +4,11 @@
 class ItemMenu
 {   public:
         String title;
+        ItemMenu *list;
+        int size_list;
+        bool isMenu;
         void (*action)();
-        ItemMenu(String title, void (* f) ());
+        ItemMenu(String title, ItemMenu list[] = {}, int size_list = 0, bool isMenu = false, void (* f) () = NULL);
         
         
 };

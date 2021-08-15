@@ -9,6 +9,8 @@ class Menu{
       Menu(String tag);
       void start(ItemMenu list[], int size_list);
       ItemMenu *copyList;
+      ItemMenu *routes;
+      int menu_counter = 0;
       void generateList();
       void countIndex();
       void buttonPressioned(int buttonUP, int buttonDown, int buttonConfirm);

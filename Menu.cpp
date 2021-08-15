@@ -7,20 +7,24 @@
 Menu::Menu(String tag){
   this->tag = tag;
 }
-void Menu::start(ItemMenu list[], int size_list){
-  sizeList = size_list;
-  copyList = &list[0];
-   GLCD.Init();
+void bannerMenu(String tag){
    GLCD.SelectFont(System5x7, BLACK); 
    GLCD.CursorToXY(GLCD.Width * 0.2, 3);
    GLCD.print(tag);
    GLCD.DrawRoundRect(17,0,95,12, 5);  // rounded rectangle around text area   
    GLCD.CursorToXY(5, 20);
    GLCD.SelectFont(SystemFont5x7, BLACK);// font for the default text area
-  generateList();
+}
+void Menu::start(ItemMenu list[], int size_list){
+   copyList = &list[0];
+   routes = &list[0];
+   sizeList = size_list;
+   GLCD.Init();
+   bannerMenu(tag);
+   generateList();
 }
 
-void Menu::buttonPressioned( int buttonUP, int buttonDown, int buttonConfirm){
+void Menu::buttonPressioned(int buttonUP, int buttonDown, int buttonConfirm){
    isActive = true;
    if(buttonUP == 0){
          indicatorCursor--;
@@ -45,7 +49,8 @@ void Menu::buttonPressioned( int buttonUP, int buttonDown, int buttonConfirm){
      indicatorCursor2++;
      pointer++;
      delay(400);
-     if(indicatorCursor > 3) indicatorCursor = 3;
+     if(indicatorCursor > 3 && sizeList > 4) indicatorCursor = 3;
+     if(indicatorCursor > sizeList && sizeList < 4) indicatorCursor = sizeList;
      if(indicatorCursor2 > 4) indicatorCursor2 = 4;
      if(pointer > sizeList -1) pointer = sizeList -1;
      if(indicatorCursor2 == 4){
@@ -58,18 +63,32 @@ void Menu::buttonPressioned( int buttonUP, int buttonDown, int buttonConfirm){
  
    }
    else if(buttonConfirm == 0){
-         copyList[pointer].action();
-         delay(400);
-   }
+         if(copyList[pointer].isMenu == true){
+           sizeList =  copyList[pointer].list[0].size_list;
+           indicatorCursor = 0;
+           indicatorCursor2 = 0;
+           pointer = 0;
+           GLCD.ClearScreen();
+           bannerMenu(copyList[pointer].title);
+           copyList = &copyList[pointer].list[pointer];
+           generateList();
+           delay(400);
+         } else if(copyList[pointer].isMenu == false){
+           copyList[pointer].action();
+         }
+    
+         
+         
+   } 
 }
 
 void Menu::generateList(){
-    if(isActive == true){
+    if(isActive == true && sizeList > 4){
            for(int count = 0; count < 4; count++){
               gerarMenu(count, NULL);
           }
     }
-   else{
+   else if(sizeList > 4){
             bk_list[0] = copyList[0].title;
             bk_list[1] = copyList[1].title;
             bk_list[2] = copyList[2].title;
@@ -81,7 +100,17 @@ void Menu::generateList(){
               menuNotSelected(bk_list[x], x);
            }
       }
-   }   
+   } else{
+    if(indicatorCursor < sizeList){
+         for(int x = 0; x < sizeList; x++){
+           if(x == indicatorCursor){
+            menuSelected(copyList[x].title, x);
+            } else{
+              menuNotSelected(copyList[x].title, x);
+           }
+      }
+   }
+   }
 }
 void Menu::gerarMenu(int count, int position = NULL){
    position = (position == NULL) ? count : position;
