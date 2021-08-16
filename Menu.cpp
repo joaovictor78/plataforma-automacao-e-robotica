@@ -2,7 +2,7 @@
 #include "Menu.h"
 #include <glcd.h>
 #include "fonts/SystemFont5x7.h"  
-
+#include "LinkedList.h"
 //****************************************************************
 Menu::Menu(String tag){
   this->tag = tag;
@@ -17,14 +17,16 @@ void bannerMenu(String tag){
 }
 void Menu::start(ItemMenu list[], int size_list){
    copyList = &list[0];
-   routes = &list[0];
+   routes = LinkedList<ItemMenu*>();
    sizeList = size_list;
+   first_menu_list_size = size_list;
+   routes.add(&copyList[0]);
    GLCD.Init();
    bannerMenu(tag);
    generateList();
 }
 
-void Menu::buttonPressioned(int buttonUP, int buttonDown, int buttonConfirm){
+void Menu::buttonPressioned(int buttonUP, int buttonDown, int buttonConfirm, int backButton){
    isActive = true;
    if(buttonUP == 0){
          indicatorCursor--;
@@ -65,21 +67,35 @@ void Menu::buttonPressioned(int buttonUP, int buttonDown, int buttonConfirm){
    else if(buttonConfirm == 0){
          if(copyList[pointer].isMenu == true){
            sizeList =  copyList[pointer].list[0].size_list;
+           GLCD.ClearScreen();
+           bannerMenu(copyList[pointer].title);
+           routes.add(copyList);
+           copyList = &copyList[pointer].list[pointer];
+           generateList();
            indicatorCursor = 0;
            indicatorCursor2 = 0;
            pointer = 0;
-           GLCD.ClearScreen();
-           bannerMenu(copyList[pointer].title);
-           copyList = &copyList[pointer].list[pointer];
-           generateList();
            delay(400);
          } else if(copyList[pointer].isMenu == false){
            copyList[pointer].action();
-         }
-    
-         
-         
    } 
+}
+else if(backButton == 0){
+      GLCD.ClearScreen();
+      copyList =  routes.get(routes.size() - 1);
+      if((routes.get(routes.size() - 1)) == routes.get(0)){
+        bannerMenu(this->tag);
+        sizeList = first_menu_list_size;
+      } else{
+        sizeList =  copyList->size_list;
+        bannerMenu(copyList->title);
+      }
+      generateList();
+      routes.pop();
+      delay(400);
+      
+      
+}
 }
 
 void Menu::generateList(){

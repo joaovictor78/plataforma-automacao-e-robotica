@@ -3,6 +3,7 @@
 #define buttonUP 3
 #define buttonConfirm  2
 #define buttonDown 1
+#define backButton 0
 #include <glcd.h>
 #include "fonts/SystemFont5x7.h"
 // ---------- PROTOTIPO DE FUNÇOES ------------------------------
@@ -46,9 +47,10 @@ void setup(){
    pinMode(buttonDown, INPUT_PULLUP);
    pinMode(buttonUP, INPUT_PULLUP);
    pinMode(buttonConfirm, INPUT_PULLUP);
+   pinMode(backButton, INPUT_PULLUP);
    mainMenu.start(listMainMenu, 3);
 }
 
 void  loop(){
-     mainMenu.buttonPressioned(digitalRead(buttonUP), digitalRead(buttonDown), digitalRead(buttonConfirm));
+     mainMenu.buttonPressioned(digitalRead(buttonUP), digitalRead(buttonDown), digitalRead(buttonConfirm), digitalRead(backButton));
 }
