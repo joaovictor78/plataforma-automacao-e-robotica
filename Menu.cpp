@@ -66,39 +66,49 @@ void Menu::buttonPressioned(int buttonUP, int buttonDown, int buttonConfirm, int
    }
    else if(buttonConfirm == 0){
          if(copyList[pointer].isMenu == true){
+           indicatorCursor = 0;
+           indicatorCursor2 = 0;
+           pointer = 0;
            sizeList =  copyList[pointer].list[0].size_list;
            GLCD.ClearScreen();
            bannerMenu(copyList[pointer].title);
            routes.add(copyList);
            copyList = &copyList[pointer].list[pointer];
            generateList();
-           indicatorCursor = 0;
-           indicatorCursor2 = 0;
-           pointer = 0;
            delay(400);
          } else if(copyList[pointer].isMenu == false){
            copyList[pointer].action();
    } 
 }
 else if(backButton == 0){
+  ItemMenu *previous_menu;
+  if(routes.size() != 0){
       GLCD.ClearScreen();
+      indicatorCursor = 0;
+      pointer = 0;
+      indicatorCursor2 = 0;
       copyList =  routes.get(routes.size() - 1);
+      previous_menu = routes.get(routes.size() - 1);
       if((routes.get(routes.size() - 1)) == routes.get(0)){
         bannerMenu(this->tag);
         sizeList = first_menu_list_size;
       } else{
         sizeList =  copyList->size_list;
-        bannerMenu(copyList->title);
+        previous_menu = routes.get(routes.size() - 2);
+        bannerMenu(previous_menu->title);
       }
       generateList();
       routes.pop();
       delay(400);
       
-      
+  }
 }
 }
 
 void Menu::generateList(){
+  GLCD.SetFontColor(BLACK); 
+  GLCD.CursorToXY(80,16);
+  GLCD.println("Item:" + (String) (pointer+1) + "-" + (String) sizeList);
     if(isActive == true && sizeList > 4){
            for(int count = 0; count < 4; count++){
               gerarMenu(count, NULL);

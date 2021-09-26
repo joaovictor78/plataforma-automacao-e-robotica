@@ -1,4 +1,3 @@
-
 #ifndef LinkedList_h
 #define LinkedList_h
 
