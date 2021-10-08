@@ -9,7 +9,7 @@
 #define dig1 53
 #define dig2 51
 #define dig4PWM 4
-#define analog0 0
+#define analog0 A0
 //---------------------------------------------------------------------------------------------
 #include <glcd.h>
 #include <Ultrasonic.h>
@@ -23,13 +23,18 @@ void loadingAnimation();
 void testarUltrassonico();
 void testarServoMotor();
 void testarSensorDeLuminosidade();
+void testarSensorGas();
+void testarSensorChama();
 // ---------- DECLARACAO DE OBJETOS ------------------------------  
 Menu mainMenu("Menu principal");
 //  ---------- ARRAY DE OBJETOS --------------------------------
 ItemMenu listSensoresAnalogicos[] = {
-  ItemMenu("Ultrassonico",{}, 3, false, testarUltrassonico),
+  ItemMenu("Ultrassonico",{}, 0, false, testarUltrassonico),
   ItemMenu("Luminosidade",{},0, false, testarSensorDeLuminosidade),
-  ItemMenu("Motor de Passo",{},0, false, testarServoMotor),
+  ItemMenu("Servo motor",{},0, false, testarServoMotor),
+  ItemMenu("Sensor de gas",{},0, false, testarSensorGas),
+  ItemMenu("Sensor de chama",{},0, false, testarSensorGas),
+  
 };
 ItemMenu listSensoresAnalogicosEDigitais[] = {
   ItemMenu("Analogicos", listSensoresAnalogicos, 2, true),
@@ -137,19 +142,52 @@ void testarServoMotor(){
   s.attach(dig4PWM);
   Serial.begin(9600);
   s.write(0); // Inicia motor posição zero
+   GLCD.ClearScreen();
+   GLCD.print(" Servo Motor ");
+   GLCD.SetFontColor(BLACK);
+   GLCD.CursorTo(0, 2);
+   GLCD.println("posicao: ");
   while(true){
-    GLCD.ClearScreen();
-   GLCD.print(" Ultrassonico ");
-  GLCD.CursorTo(0, 2);
+  if(digitalRead(backButton) == 0){
+      break;
+   }
+  GLCD.CursorTo(0, 4);
       for(pos = 0; pos < 90; pos++){
-    s.write(pos);
-  delay(15);
+         GLCD.CursorTo(0, 6);
+         GLCD.println(pos);
+         s.write(pos);
+         delay(15);
   }
   delay(1000);
   for(pos = 90; pos >= 0; pos--)
   {
+    GLCD.CursorTo(0, 6);
+    GLCD.println(pos);
     s.write(pos);
     delay(15);
+  }
+  }
+}
+void testarSensorGas(){
+ int leitura_sensor = 300;//DEFININDO UM VALOR LIMITE (NÍVEL DE GÁS NORMAL)
+   GLCD.ClearScreen();
+   GLCD.print(" Sensor de Gas ");
+   GLCD.SetFontColor(BLACK);
+   GLCD.CursorTo(0, 3);
+   GLCD.println("NIVEL NORMAL DO GAS: 300");
+  while(true){
+    int valorDoGas = analogRead(analog0);
+    GLCD.CursorTo(0, 5);
+    GLCD.println(valorDoGas);
+  }
+}
+void testarSensorChama(){
+  while(true){
+  int valorSensor = digitalRead(dig1);
+  if(valorSensor == 1){
+    GLCD.println("Detectou chama!");
+  } else{
+    GLCD.println("Nenhuma chama detectada!");
   }
   }
 }
@@ -162,6 +200,8 @@ void setup(){
    pinMode(buttonUP, INPUT_PULLUP);
    pinMode(buttonConfirm, INPUT_PULLUP);
    pinMode(backButton, INPUT_PULLUP);
+   pinMode(analog0, INPUT);
+   pinMode(dig1, INPUT);
    mainMenu.start(listMainMenu, 6);
 }
 
