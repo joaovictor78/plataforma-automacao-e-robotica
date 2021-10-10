@@ -1,6 +1,7 @@
 #include "Menu.h"
 #include "ItemMenu.h"
 #include <Servo.h>
+#include <Stepper.h>
 #define buttonUP 3
 #define buttonConfirm  2
 #define buttonDown 1
@@ -37,7 +38,7 @@ ItemMenu listSensoresAnalogicos[] = {
   
 };
 ItemMenu listSensoresAnalogicosEDigitais[] = {
-  ItemMenu("Analogicos", listSensoresAnalogicos, 2, true),
+  ItemMenu("Analogicos", listSensoresAnalogicos, 5, true),
   ItemMenu("Digitais", {}, 2, true)
 };
 ItemMenu listAtuadoresAnalogicosEDigitais[] = {
@@ -191,6 +192,96 @@ void testarSensorChama(){
   }
   }
 }
+void sensorDeAgua(){
+  int resval = 0;  // holds the value
+  while(true){
+    resval = analogRead(analog0); //Read data from analog pin and store it to resval variable
+    if (resval<=100){ GLCD.println("     Empty    "); } 
+    else if (resval>100 && resval<=300){ GLCD.println("       Low      "); }
+    else if (resval>300 && resval<=330){ GLCD.println("     Medium     "); } 
+    else if (resval>330){ GLCD.println("      High      "); }
+    delay(1000); 
+  }
+}
+void motorDePasso(){
+  while(true){
+  const int stepsPerRevolution = 500; 
+  Stepper myStepper(stepsPerRevolution, 8,10,9,11); 
+  for (int i = 0; i<=3; i++){
+    myStepper.step(-512); 
+    delay(2000);
+ }
+  
+ //Gira o motor no sentido anti-horario a 120 graus
+ for (int i = 0; i<=2; i++){
+  myStepper.step(682); 
+  delay(2000);
+ }
+}
+}
+void sensorDeTemperatura(){
+  while(true){
+        // Get a reading from the temperature sensor:
+        int reading = analogRead(analog0);
+        // Convert the reading into voltage:
+        float voltage = reading * (5000 / 1024.0);
+        // Convert the voltage into the temperature in degree Celsius:
+        float temperature = voltage / 10;
+        // Print the temperature in the Serial Monitor:
+        GLCD.print(temperature);
+        GLCD.print(" \xC2\xB0"); // shows degree symbol
+        GLCD.println("C");
+        delay(1000); // wait a second between readings
+      
+  }
+}
+void sensorDeCorrente(){
+  const int currentPin = A0;
+  int sensitivity = 66;
+  int adcValue= 0;
+  int offsetVoltage = 2500;
+  double adcVoltage = 0;
+  double currentValue = 0;
+  GLCD.print(" Current Sensor ");
+  GLCD.CursorTo(0,1);
+  GLCD.print("  with Arduino  ");
+  delay(2000);
+  while(true){
+     adcValue = analogRead(analog0);
+     adcVoltage = (adcValue / 1024.0) * 5000;
+     currentValue = ((adcVoltage - offsetVoltage) / sensitivity);
+     GLCD.print("Raw Sensor Value = " );
+     GLCD.print(adcValue);
+     delay(1000);
+     GLCD.CursorTo(0,0);
+     GLCD.print("ADC Value =     ");
+     GLCD.CursorTo(12,0);
+     GLCD.print(adcValue);
+     delay(2000);
+     GLCD.print("\t Voltage(mV) = ");
+     GLCD.print(adcVoltage,3);
+     GLCD.CursorTo(0,0);
+     GLCD.print("V in mV =       ");
+     GLCD.CursorTo(10,0);
+     GLCD.print(adcVoltage,1);
+     delay(2000);
+     GLCD.print("\t Current = ");
+     GLCD.println(currentValue,3);
+     GLCD.CursorTo(0,0);
+     GLCD.print("Current =       ");
+     GLCD.CursorTo(10,0);
+     GLCD.print(currentValue,2);
+     GLCD.CursorTo(14,0);
+     GLCD.print("A");
+     delay(2500);
+  }
+}
+void testarSensorDeProximidade(){
+  
+}
+void testarSensorDeCores(){
+  
+}
 void limparTela(){
   GLCD.ClearScreen();
 }
@@ -206,6 +297,6 @@ void setup(){
 }
 
 void  loop(){
-     leituraBottao = digitalRead(buttonConfirm);
+     //leituraBottao = digitalRead(buttonConfirm);
      mainMenu.buttonPressioned(digitalRead(buttonUP), digitalRead(buttonDown), digitalRead(buttonConfirm), digitalRead(backButton));
 }
